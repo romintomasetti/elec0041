@@ -1,0 +1,10 @@
+{
+    "build" : {
+        "dockerfile" : "../dockerfile",
+        "context"    : "../."
+    },
+    "extensions" : [
+        "eamodio.gitlens",
+        "mhutchie.git-graph"
+    ]
+}

@@ -1,0 +1,4 @@
+# Put system requirements related to working on the project
+
+# We need git for versioning
+git
