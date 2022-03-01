@@ -3,3 +3,10 @@ homework-*/*.db
 homework-*/*.msh
 homework-*/*.pre
 homework-*/*.res
+homework-*/*.msh
+homework-*/*.txt
+homework-*/*.pos
+homework-*/*.geo_unrolled
+homework-*/example/
+!homework-*/example/*.geo
+!homework-*/example/*.pro

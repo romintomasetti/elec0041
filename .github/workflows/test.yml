@@ -56,3 +56,6 @@ jobs:
             - name: Check .geo file is valid
               run : |
                   gmsh -0 homework-1/busbar.geo
+            - name : Run the simulation
+              run : |
+                  getdp homework-1/busbar.pro -solve EleKin_v -pos Map

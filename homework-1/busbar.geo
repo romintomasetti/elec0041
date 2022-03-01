@@ -98,10 +98,10 @@ CP_surface = newc; Plane Surface(CP_surface) = {
 };
 
 // Copper plate physical surface
-Physical Surface("Copper plate surface") = {CP_surface};
+Physical Surface("Copper plate surface", 200) = {CP_surface};
 
 // Input/output holes physical curves
-Physical Curve("input"        ) = {I_hole_cloop};
-Physical Curve("output_left"  ) = {O_l_hole_cloop};
-Physical Curve("output_center") = {O_c_hole_cloop};
-Physical Curve("output_right" ) = {O_r_hole_cloop};
+Physical Curve("input"        , 201) = {I_hole_cr  ,I_hole_cl   };
+Physical Curve("output_left"  , 202) = {O_l_hole_cr,O_l_hole_cl};
+Physical Curve("output_center", 203) = {O_c_hole_cr,O_c_hole_cl};
+Physical Curve("output_right" , 204) = {O_r_hole_cr,O_r_hole_cl};
