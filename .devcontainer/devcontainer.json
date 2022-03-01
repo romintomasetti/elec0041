@@ -6,5 +6,11 @@
     "extensions" : [
         "eamodio.gitlens",
         "mhutchie.git-graph"
+    ],
+    "remoteEnv": {
+        "DISPLAY" : "${localEnv:DISPLAY}"
+    },
+    "runArgs": [
+        "--network=host",
     ]
 }
