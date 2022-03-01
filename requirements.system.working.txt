@@ -2,3 +2,7 @@
 
 # We need git for versioning
 git
+
+# We need Python for driving the optimization
+python3
+python3-pip
