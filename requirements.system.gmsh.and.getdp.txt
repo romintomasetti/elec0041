@@ -1,0 +1,12 @@
+# Put system requirements related to installing and running GMSH and GETDP
+
+
+# Needed to fetch GMSH and GETDP installers
+wget
+
+# Needed for GMSH
+libglu1-mesa
+libxcursor-dev
+libxft2
+libxinerama1
+libgomp1
