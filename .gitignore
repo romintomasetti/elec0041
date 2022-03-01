@@ -1,0 +1,5 @@
+# Ignore files related to GMSH and GETDP that we don't want to commit
+homework-*/*.db
+homework-*/*.msh
+homework-*/*.pre
+homework-*/*.res
