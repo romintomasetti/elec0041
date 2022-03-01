@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ main , homework-* ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker registry login
+        run : |
+          docker login -u ${{ github.actor}} -p ${{ secrets.GITHUB_TOKEN }} ${{ env.REGISTRY }}
+      - name: Docker image pull (try)
+        run : |
+          docker pull ${{ env.REGISTRY }}/${{ github.repository }}
+      - name: Docker image build
+        run : |
+          docker build \
+            -f dockerfile \
+            --cache-from ${{ env.REGISTRY }}/${{ github.repository }} \
+            -t ${{ env.REGISTRY }}/${{ github.repository }} \
+            .
+      - name: Docker image push
+        run : |
+          docker push ${{ env.REGISTRY }}/${{ github.repository }}
