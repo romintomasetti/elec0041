@@ -6,7 +6,8 @@
     "extensions" : [
         "eamodio.gitlens",
         "mhutchie.git-graph",
-        "analytic-signal.preview-pdf"
+        "analytic-signal.preview-pdf",
+        "ms-python.python"
     ],
     "remoteEnv": {
         "DISPLAY" : "${localEnv:DISPLAY}"
