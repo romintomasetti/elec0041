@@ -10,3 +10,9 @@ DefineConstant[ I_y       = {0.06          , Name "Input hole Y coordinate [m]"}
 
 DefineConstant[ O_spacing = {0.05          , Name "Output holes spacing [m]"}];
 DefineConstant[ O_height  = {0.01          , Name "Output holes height [m]"}];
+
+// Design optimization
+DefineConstant[ DO_x      = {CP_width / 2.0, Name "Ellipse center X coordinate [m]"}];
+DefineConstant[ DO_y      = {0.035         , Name "Ellipse center Y coordinate [m]"}];
+DefineConstant[ DO_a      = {0.015 / 2.0   , Name "Ellipse half vertical axis [m]"}];
+DefineConstant[ DO_b      = {0.008 / 2.0   , Name "Ellipse half horizontal axis [m]"}];

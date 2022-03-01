@@ -53,9 +53,9 @@ jobs:
                 password: ${{ secrets.GITHUB_TOKEN }}
         steps:
             - uses: actions/checkout@v2
-            - name: Check .geo file is valid
+            - name: Check .geo file is valid by meshing it
               run : |
-                  gmsh -0 homework-1/busbar.geo
-            - name : Run the simulation
+                  gmsh -2 homework-1/busbar.geo
+            - name : Run the simulation with the default parameters to check it is valid
               run : |
                   getdp homework-1/busbar.pro -solve EleKin_v -pos Map

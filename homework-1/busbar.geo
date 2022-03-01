@@ -88,20 +88,48 @@ O_r_hole_cl = newc; Circle(O_r_hole_cl) = {
 };
 O_r_hole_cloop = newcl; Curve Loop(O_r_hole_cloop) = {O_r_hole_cr,O_r_hole_cl};
 
+// Design optimization hole
+DO_cp = newp; Point(DO_cp) = {DO_x     , DO_y     , 0, DO_mesh};
+DO_lp = newp; Point(DO_lp) = {DO_x-DO_b, DO_y     , 0, DO_mesh};
+DO_bp = newp; Point(DO_bp) = {DO_x     , DO_y-DO_a, 0, DO_mesh};
+DO_rp = newp; Point(DO_rp) = {DO_x+DO_b, DO_y     , 0, DO_mesh};
+DO_tp = newp; Point(DO_tp) = {DO_x     , DO_y+DO_a, 0, DO_mesh};
+
+DO_br_el = newc; Ellipse(DO_br_el) = {DO_bp,DO_cp,DO_bp,DO_rp};
+DO_tr_el = newc; Ellipse(DO_tr_el) = {DO_tp,DO_cp,DO_tp,DO_rp};
+DO_tl_el = newc; Ellipse(DO_tl_el) = {DO_tp,DO_cp,DO_tp,DO_lp};
+DO_bl_el = newc; Ellipse(DO_bl_el) = {DO_bp,DO_cp,DO_bp,DO_lp};
+
+DO_hole_cloop = newcl; Curve Loop(DO_hole_cloop) = {
+    DO_br_el,
+    -DO_tr_el,
+    DO_tl_el,
+    -DO_bl_el
+};
+
 // Copper plate surface
 CP_surface = newc; Plane Surface(CP_surface) = {
     CP_external_c,
     -I_hole_cloop,
     -O_l_hole_cloop,
     -O_c_hole_cloop,
-    -O_r_hole_cloop
+    -O_r_hole_cloop,
+    -DO_hole_cloop
 };
 
 // Copper plate physical surface
 Physical Surface("Copper plate surface", 200) = {CP_surface};
 
 // Input/output holes physical curves
-Physical Curve("input"        , 201) = {I_hole_cr  ,I_hole_cl   };
+Physical Curve("input"        , 201) = {I_hole_cr  ,I_hole_cl  };
 Physical Curve("output_left"  , 202) = {O_l_hole_cr,O_l_hole_cl};
 Physical Curve("output_center", 203) = {O_c_hole_cr,O_c_hole_cl};
 Physical Curve("output_right" , 204) = {O_r_hole_cr,O_r_hole_cl};
+
+// Design optimization hole physical curve
+Physical Curve("optimization" , 205) = {
+    DO_br_el,
+    -DO_tr_el,
+    DO_tl_el,
+    -DO_bl_el
+};

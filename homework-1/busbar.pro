@@ -4,9 +4,10 @@ Group {
   ElectrodeOutLeft   = Region[202];
   ElectrodeOutCenter = Region[203];
   ElectrodeOutRight  = Region[204];
+  OptimizationHole   = Region[205];
 
   Vol_Ele            = Region[ {Busbar} ];
-  Sur_Neu_Ele        = Region[ {} ];
+  Sur_Neu_Ele        = Region[ {OptimizationHole} ];
   Sur_Electrodes_Ele = Region[ {ElectrodeIn, ElectrodeOutLeft, ElectrodeOutCenter, ElectrodeOutRight} ];
 }
 
