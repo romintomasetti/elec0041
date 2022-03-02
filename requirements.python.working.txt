@@ -1,1 +1,3 @@
 typeguard
+numpy
+scipy
