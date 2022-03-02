@@ -154,9 +154,11 @@ class Problem(object):
         )
         logging.info(f"Best point found is {result}")
 
-if __name__ == "__main__":
-
-    problem = Problem(
+def problem_homework_1():
+    """
+    Create problem for homework 1.
+    """
+    return Problem(
         geo_file         = HOMEWORK_1 / "busbar.geo",
         pro_file         = HOMEWORK_1 / "busbar.pro",
         problem          = "EleKin_v",
@@ -164,14 +166,12 @@ if __name__ == "__main__":
         input_parameters = {
             # Input variable with nominal/low/high range
             "DO_y" : [0.035  , 0.03  , 0.04  ],
-            "DO_a" : [0.0075 , 0.005 , 0.01 ],
+            "DO_a" : [0.0075 , 0.005 , 0.01  ],
             "DO_b" : [0.004  , 0.002 , 0.006 ],
         }
     )
 
-    # Run a nominal to check its allright
-    res = problem.nominal()
-    assert numpy.allclose(res,[375., -118.80611118, -137.38703399, -118.80685483]),res
+if __name__ == "__main__":
 
-    # Run the optimization
+    problem = problem_homework_1()
     problem.run()

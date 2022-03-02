@@ -59,6 +59,9 @@ jobs:
             - name: Run the simulation with the default parameters to check it is valid
               run : |
                   getdp homework-1/busbar.pro -solve EleKin_v -pos Map
+            - name: Check optimization
+              run : |
+                  pytest homework-1/ -s --log-cli-level=info
             - name: Compile report
               run : |
                   pdflatex homework-1/report/report-hw-1.tex
