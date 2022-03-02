@@ -1,0 +1,2 @@
+# System requirements related to report making (mainly Latex)
+texlive-latex-extra

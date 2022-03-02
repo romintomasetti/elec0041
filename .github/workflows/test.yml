@@ -56,6 +56,9 @@ jobs:
             - name: Check .geo file is valid by meshing it
               run : |
                   gmsh -2 homework-1/busbar.geo
-            - name : Run the simulation with the default parameters to check it is valid
+            - name: Run the simulation with the default parameters to check it is valid
               run : |
                   getdp homework-1/busbar.pro -solve EleKin_v -pos Map
+            - name: Compile report
+              run : |
+                  pdflatex homework-1/report/report-hw-1.tex

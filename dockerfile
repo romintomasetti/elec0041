@@ -5,12 +5,14 @@ ARG GETDP_VERSION=3.4.0
 
 COPY requirements.system.gmsh.and.getdp.txt requirements.system.gmsh.and.getdp.txt
 COPY requirements.system.working.txt        requirements.system.working.txt
+COPY requirements.system.report.txt         requirements.system.report.txt
 COPY requirements.python.working.txt        requirements.python.working.txt
 
 RUN    apt update \
     # Install system requirements
     && apt --yes --no-install-recommends install $(grep -vE "^\s*#" requirements.system.gmsh.and.getdp.txt  | tr "\n" " ") \
     && apt --yes --no-install-recommends install $(grep -vE "^\s*#" requirements.system.working.txt         | tr "\n" " ") \
+    && apt --yes --no-install-recommends install $(grep -vE "^\s*#" requirements.system.report.txt          | tr "\n" " ") \
     # Update alternative for python
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 \
     # Install Python requirements

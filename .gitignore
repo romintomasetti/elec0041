@@ -10,3 +10,9 @@ homework-*/*.geo_unrolled
 homework-*/example/
 !homework-*/example/*.geo
 !homework-*/example/*.pro
+
+# Ignore files related to LaTex reports
+report*.log
+report*.aux
+report*.out
+report*.pdf
