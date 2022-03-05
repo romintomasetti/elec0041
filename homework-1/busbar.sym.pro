@@ -3,17 +3,17 @@ Group {
   ElectrodeIn        = Region[201];
   ElectrodeOutLeft   = Region[202];
   ElectrodeOutCenter = Region[203];
-  ElectrodeOutRight  = Region[204];
   OptimizationHole   = Region[205];
 
   Vol_Ele            = Region[ {Busbar} ];
   Sur_Neu_Ele        = Region[ {OptimizationHole} ];
-  Sur_Electrodes_Ele = Region[ {ElectrodeIn, ElectrodeOutLeft, ElectrodeOutCenter, ElectrodeOutRight} ];
+  Sur_Electrodes_Ele = Region[ {ElectrodeIn, ElectrodeOutLeft, ElectrodeOutCenter} ];
 }
 
 Function {
   DefineConstant [
-    CurrentValue = {375, Name "Input current value"}
+    // Divide input current by 2 (we model half of the plate)
+    CurrentValue = {375/2.0, Name "Input current value"}
   ];
   sigma[Busbar] = 5e7;
 }
@@ -28,7 +28,6 @@ Constraint {
     Case {
       { Region ElectrodeOutLeft   ; Value 0; }
       { Region ElectrodeOutCenter ; Value 0; }
-      { Region ElectrodeOutRight  ; Value 0; }
     }
   }
   { Name SetGlobalCurrent; Type Assign;
@@ -154,13 +153,13 @@ PostProcessing {
 PostOperation {
   { Name Map; NameOfPostProcessing EleKin_v;
      Operation {
-       Print[ v, OnElementsOf Dom_Hgrad_v_Ele, File "v.pos" ];
-       Print[ j, OnElementsOf Dom_Hgrad_v_Ele, File "j.pos" ];
-       Print[ losses, OnElementsOf Dom_Hgrad_v_Ele, File "losses.pos" ];
-       Print[ I, OnRegion Sur_Electrodes_Ele, File "I.txt" , Format Table];
-       Print[ U, OnRegion Sur_Electrodes_Ele, File "U.txt" , Format Table];
+       Print[ v, OnElementsOf Dom_Hgrad_v_Ele, File "v.sym.pos" ];
+       Print[ j, OnElementsOf Dom_Hgrad_v_Ele, File "j.sym.pos" ];
+       Print[ losses, OnElementsOf Dom_Hgrad_v_Ele, File "losses.sym.pos" ];
+       Print[ I, OnRegion Sur_Electrodes_Ele, File "I.sym.txt" , Format Table];
+       Print[ U, OnRegion Sur_Electrodes_Ele, File "U.sym.txt" , Format Table];
        Print[ R, OnRegion ElectrodeIn, Format Table];
-       Print[ integrated_losses, OnGlobal , File "int_losses.txt", Format Table];
+       Print[ integrated_losses, OnGlobal , File "int_lossessym..txt", Format Table];
      }
   }
 }

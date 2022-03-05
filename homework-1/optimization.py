@@ -26,27 +26,35 @@ class Problem(object):
     def __init__(self,*,
         geo_file : typing.Union[str,Path],
         pro_file : typing.Union[str,Path],
+        outputfiles : str,
         problem : str,
         postpro : str,
-        input_parameters : typing.Dict[str,typing.List]
+        input_parameters : typing.Dict[str,typing.List],
+        coef_I_inobj : float
     ):
         """
         Initialize problem:
             * .geo file
             * .pro file
+            * suffix to add to output files
             * problem name in the .pro file to solve
             * post-pro name in the .pro file
             * input variables
+            * coefficient to be applied to input current in objective function
         """
         assert os.path.exists(geo_file)
         assert os.path.exists(pro_file)
         self.geo_file = geo_file
         self.pro_file = pro_file
 
+        self.outputfiles = outputfiles
+
         self.problem = problem
         self.postpro = postpro
 
         self.input_parameters=  input_parameters
+
+        self.coef_I_inobj = coef_I_inobj
 
         # Count the number of evaluations
         self.counter = 0
@@ -70,6 +78,7 @@ class Problem(object):
                 self.geo_file,
             ]
         )
+        logging.debug(o.decode())
 
         # Ensure there is no warning or skipping in the output of GMSH
         if any(x in o.decode() for x in ['Warning','warning','skipping','Skipping']):
@@ -79,7 +88,7 @@ class Problem(object):
         """
         Load current at output ports, discarding the first element in the file (not useful in this case).
         """
-        with open(Path(os.path.dirname(self.geo_file)) / "I.txt","r") as f:
+        with open(Path(os.path.dirname(self.geo_file)) / f"I{self.outputfiles}.txt","r") as f:
             a = numpy.loadtxt(f)
         return a[1::]
 
@@ -98,6 +107,7 @@ class Problem(object):
                 "-pos",self.postpro,
             ]
         )
+        logging.debug(o.decode())
 
         # Check in the output that the input parameters where correctly recognized by GETDP
         for k,v in input_parameters_values.items():
@@ -120,9 +130,18 @@ class Problem(object):
         self._mesh (input_parameters_values=x)
         self._solve(input_parameters_values=x)
         a = self._read()
-        # Ensure symmetry of left and right ports
-        assert numpy.abs(numpy.abs(a[1]) - numpy.abs(a[3])) < 1.0,a
         return a
+
+    def objective_func(self,x):
+        """
+        Objective function will be minimized.
+        F(I1,I2,I3) = abs( abs(I1) - abs(I2) )
+        (I1 and I3 are considered equal and we want them to equal I2).
+        """
+        currents = self(x)
+        o = numpy.abs(numpy.abs(currents[1]) - self.coef_I_inobj * numpy.abs(currents[2]))
+        logging.info(f"> Objective({x} => {currents}) = {o}")
+        return o
 
     def run(self):
         """
@@ -136,35 +155,30 @@ class Problem(object):
             (x[1],x[2]) for x in self.input_parameters.values()
         ]
 
-        def objective_func(x):
-            """
-            Objective function will be minimized.
-            F(I1,I2,I3) = abs( abs(I1) - abs(I2) )
-            (I1 and I3 are considered equal and we want them to equal I2).
-            """
-            currents = self(x)
-            o = numpy.abs(numpy.abs(currents[1]) - numpy.abs(currents[2]))
-            logging.info(f"> Objective({x} => {currents}) = {o}")
-            return o
+        logging.info(f"> Launching optimization with bounds {bounds}")
 
+        # Brute force DOE
         result = scipy.optimize.brute(
-            objective_func,
-            bounds,
-            Ns = 3
+            func    = self.objective_func,
+            ranges  = bounds,
+            Ns      = 4,
+            # finish  = None,
         )
-        logging.info(f"Best point found is {result}")
+        logging.info(f"Global best point found is {result}")
 
-def problem_homework_1():
+def problem_homework_1(filenamebase : str = "busbar",outputfiles : str = "", coef_I_inobj : float = 1.0):
     """
     Create problem for homework 1.
     """
     return Problem(
-        geo_file         = HOMEWORK_1 / "busbar.geo",
-        pro_file         = HOMEWORK_1 / "busbar.pro",
+        geo_file         = HOMEWORK_1 / f"{filenamebase}.geo",
+        pro_file         = HOMEWORK_1 / f"{filenamebase}.pro",
+        outputfiles      = outputfiles,
         problem          = "EleKin_v",
         postpro          = "Map",
+        coef_I_inobj     = coef_I_inobj,
         input_parameters = {
-            # Input variable with nominal/low/high range
+            # Input variable with nominal/low/high range.
             "DO_y" : [0.035  , 0.03  , 0.04  ],
             "DO_a" : [0.0075 , 0.005 , 0.01  ],
             "DO_b" : [0.004  , 0.002 , 0.006 ],
@@ -173,5 +187,9 @@ def problem_homework_1():
 
 if __name__ == "__main__":
 
-    problem = problem_homework_1()
+    problem = problem_homework_1(
+        filenamebase = "busbar.sym",
+        outputfiles  = ".sym",
+        coef_I_inobj = 2.0,
+    )
     problem.run()
