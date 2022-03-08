@@ -15,7 +15,8 @@ Function {
     // Divide input current by 2 (we model half of the plate)
     CurrentValue = {375/2.0, Name "Input current value"}
   ];
-  sigma[Busbar] = 5e7;
+  // Conductivity annealed copper from http://hyperphysics.phy-astr.gsu.edu/hbase/Tables/rstiv.html
+  sigma[Busbar] = 5.81e7;
 }
 
 Constraint {
