@@ -1,3 +1,6 @@
+// Include geometrical parameters
+Include "geometry.parameters.geo";
+
 Group {
   Busbar             = Region[200];
   ElectrodeIn        = Region[201];
@@ -13,7 +16,7 @@ Group {
 Function {
   DefineConstant [
     // Divide input current by 2 (we model half of the plate)
-    CurrentValue = {375/2.0, Name "Input current value"}
+    CurrentValue = {375/2.0 / CP_thickn, Name "Input current value"}
   ];
   // Conductivity annealed copper from http://hyperphysics.phy-astr.gsu.edu/hbase/Tables/rstiv.html
   sigma[Busbar] = 5.81e7;

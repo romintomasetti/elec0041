@@ -1,3 +1,6 @@
+// Include geometrical parameters
+Include "geometry.parameters.geo";
+
 Group {
   Busbar             = Region[200];
   ElectrodeIn        = Region[201];
@@ -13,9 +16,10 @@ Group {
 
 Function {
   DefineConstant [
-    CurrentValue = {375, Name "Input current value"}
+    CurrentValue = {375 / CP_thickn, Name "Input current value"}
   ];
-  sigma[Busbar] = 5e7;
+  // Conductivity annealed copper from http://hyperphysics.phy-astr.gsu.edu/hbase/Tables/rstiv.html
+  sigma[Busbar] = 5.81e7;
 }
 
 Constraint {

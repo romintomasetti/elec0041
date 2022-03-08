@@ -1,6 +1,7 @@
 // Copper plate
 DefineConstant[ CP_width  = {0.17          , Name "Constant/Copper plate width [m]"} ];
 DefineConstant[ CP_height = {0.09          , Name "Constant/Copper plate height [m]"} ];
+DefineConstant[ CP_thickn = {0.002         , Name "Constant/Copper plate thickness [m]"}];
 
 // Input / output holes
 DefineConstant[ IO_radius = {0.0025        , Name "Constant/Input and output ports hole radius [m]"}];
