@@ -2,3 +2,4 @@ typeguard
 numpy
 scipy
 pytest
+pandas

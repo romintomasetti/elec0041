@@ -16,6 +16,7 @@ report*.log
 report*.aux
 report*.out
 report*.pdf
+*.svg
 
 # Python-related
 *.pyc

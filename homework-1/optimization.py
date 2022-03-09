@@ -31,7 +31,8 @@ class Problem(object):
         problem : str,
         postpro : str,
         input_parameters : typing.Dict[str,typing.List],
-        coef_I_inobj : float
+        coef_I_inobj : float,
+        mesh_parameters : dict = {},
     ):
         """
         Initialize problem:
@@ -42,6 +43,7 @@ class Problem(object):
             * post-pro name in the .pro file
             * input variables
             * coefficient to be applied to input current in objective function
+            * mesh constants (defaults to empty dict, i.e. default values from .geo file)
         """
         assert os.path.exists(geo_file)
         assert os.path.exists(pro_file)
@@ -56,6 +58,8 @@ class Problem(object):
         self.input_parameters=  input_parameters
 
         self.coef_I_inobj = coef_I_inobj
+
+        self.mesh_parameters = mesh_parameters
 
         # Count the number of evaluations
         self.counter = 0
@@ -75,6 +79,7 @@ class Problem(object):
             args = [
                 "gmsh",
                 *self._setnumber(input_parameters_values=input_parameters_values),
+                *self._setnumber(input_parameters_values=self.mesh_parameters),
                 "-2",
                 self.geo_file,
             ]
@@ -188,7 +193,7 @@ class Problem(object):
         )
         logging.info(f"Global best point found is {result}")
 
-def problem_homework_1(filenamebase : str = "busbar",outputfiles : str = "", coef_I_inobj : float = 1.0):
+def problem_homework_1(filenamebase : str = "busbar",outputfiles : str = "", coef_I_inobj : float = 1.0, mesh_parameters : dict = {}):
     """
     Create problem for homework 1.
     """
@@ -204,7 +209,8 @@ def problem_homework_1(filenamebase : str = "busbar",outputfiles : str = "", coe
             "DO_y" : [0.035  , 0.03  , 0.04  ],
             "DO_a" : [0.0075 , 0.005 , 0.01  ],
             "DO_b" : [0.004  , 0.002 , 0.006 ],
-        }
+        },
+        mesh_parameters  = mesh_parameters,
     )
 
 if __name__ == "__main__":
