@@ -17,11 +17,18 @@
 
 \maketitle
 
+\begin{abstract}
+    This is the report for the first homework of the course ELEC0041.
+    The goal is to optimize a copper busbar such that the current arriving from an input port
+    is evenly distributed to 3 output ports.
+    \footnote{\url{https://github.com/romintomasetti/elec0041/}}
+\end{abstract}
+
 \section{Simulation}
 
-Explain how the simulation was setup, symmetries, boundary conditions, etc.
-
-Don't forget to check units.
+In this section, the simulated geometry is briefly described.
+A simple mesh convergence analysis is also conducted.
+Eventually, orders of magnitude of the simulated fields are verified.
 
 \subsection{Geometry}
 
@@ -31,7 +38,7 @@ An ellipse has been added to balance the current distribution amongst the three 
 
 \begin{figure}[h]
     \centering
-    \includesvg[width=0.25\textwidth]{/workspaces/elec0041/homework-1/report/geometry.svg}
+    \includesvg[width=0.25\textwidth]{homework-1/report/geometry.svg}
     \caption{Simulated geometry.}
     \label{figure:geometry}
 \end{figure}
@@ -67,7 +74,7 @@ An ellipse is simple to machine.
 
 \begin{figure}[h]
     \centering
-    \includesvg[width=\textwidth]{/workspaces/elec0041/homework-1/test_mesh_convergence.svg}
+    \includesvg[width=\textwidth]{homework-1/test_mesh_convergence.svg}
     \caption{
         Convergence study.
         The mesh is driven by 4 parameters, namely the size of the elements on the top and bottom borders of the copper plate,
