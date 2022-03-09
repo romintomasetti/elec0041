@@ -66,4 +66,4 @@ jobs:
                   pytest homework-1/ -s --log-cli-level=info
             - name: Compile report
               run : |
-                  pdflatex --shell-escape homework-1/report/report-hw-1.tex
+                  bash compile.latex.sh homework-1/report/report-hw-1.tex

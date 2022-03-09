@@ -16,11 +16,33 @@ Explain how the simulation was setup, symmetries, boundary conditions, etc.
 
 Don't forget to check units.
 
+\subsection{Geometry}
+
+The simulated geometry is shown in~\Cref{figure:geometry}.
+This geometry differs from the problem statement in that it takes the symmetry of the problem into account.
+An ellipse has been added to balance the current distribution amongst the three output ports.
+
+\begin{figure}[h]
+    \centering
+    \includesvg[width=0.25\textwidth]{/workspaces/elec0041/homework-1/report/geometry.svg}
+    \caption{Simulated geometry.}
+    \label{figure:geometry}
+\end{figure}
+
 \subsection{Convergence of the mesh}
 
-Done for a single design parametrization.
-Just show that the mesh will converge, and why we choose a given parametrization of the mesh for the rest
-(computational cost vs precision).
+In this section, a simple mesh convergence analysis is conducted.
+The mesh is driven by 4 parameters, namely the element size on the top and bottom copper plate borders,
+on the input and output ports, and on the balancing hole.
+
+The convergence is observed using a globally integrated quantity, namely the losses.
+The left and middle output port currents are also monitored.
+As can be seen in~\Cref{figure:mesh-convergence}, the quantities are nearly converged at the green cross,
+which is a parametrization that has a good percision/computing cost trade-off.
+
+It must be noted that even though the ellipse's center will move vertically and minor and major axes will change,
+the mesh parametrization will be kept unchanged for simplicity.
+
 
 \section{Design optimization}
 
@@ -31,5 +53,22 @@ An ellipse is simple to machine.
 \subsection{Brute force optimization}
 
 \subsection{Sensivity near optimal point}
+
+\pagebreak
+
+\section{Supplementary figures}
+
+\begin{figure}[h]
+    \centering
+    \includesvg[width=\textwidth]{/workspaces/elec0041/homework-1/test_mesh_convergence.svg}
+    \caption{
+        Convergence study.
+        The mesh is driven by 4 parameters, namely the size of the elements on the top and bottom borders of the copper plate,
+        on the input and output parts and on the ellipse.
+        Their relative proportions are kept constant.
+        The \textcolor{darkpastelgreen}{green cross} represents the chosen mesh parametrization.
+    }
+    \label{figure:mesh-convergence}
+\end{figure}
 
 \end{document}

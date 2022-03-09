@@ -1,2 +1,5 @@
 # System requirements related to report making (mainly Latex)
 texlive-latex-extra
+
+# Inkscape to convert SVG to PDF
+inkscape

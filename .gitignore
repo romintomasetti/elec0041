@@ -16,7 +16,11 @@ report*.log
 report*.aux
 report*.out
 report*.pdf
+*.pdf_tex
+*-tex.pdf
+*-tex.eps*
 *.svg
+*.dvi
 
 # Python-related
 *.pyc
