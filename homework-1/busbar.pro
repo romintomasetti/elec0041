@@ -164,7 +164,7 @@ PostOperation {
        Print[ I, OnRegion Sur_Electrodes_Ele, File "I.txt" , Format Table];
        Print[ U, OnRegion Sur_Electrodes_Ele, File "U.txt" , Format Table];
        Print[ R, OnRegion ElectrodeIn, Format Table];
-       Print[ integrated_losses, OnGlobal , File "int_losses.txt", Format Table];
+       Print[ integrated_losses, OnGlobal , File "integrated.losses.txt", Format Table];
      }
   }
 }

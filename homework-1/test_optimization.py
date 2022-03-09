@@ -18,6 +18,8 @@ def test_homework_1():
     res = problem.nominal()
     assert numpy.allclose(res,EXPECTED_RESULT_FULL),res
 
+    assert numpy.allclose(problem.fields['voltages'][1::],[0.,0.,0.,])
+
 def test_homework_1_sym():
     # Create problem with symmetry
     problem = optimization.problem_homework_1(filenamebase="busbar.sym", outputfiles = ".sym", coef_I_inobj = 2.0)
@@ -26,7 +28,12 @@ def test_homework_1_sym():
     res = problem.nominal()
     assert numpy.allclose(res,EXPECTED_RESULT_SYM),res
 
+    assert numpy.allclose(problem.fields['voltages'][1::],[0.,0.,])
+
 def test_homework_1_near_optimal():
+    """
+    Test a 'near-optimal' configuration, i.e. currents are 'nearly' balanced.
+    """
     GEOM_PARAMS = [
         0.02787345, # Y position of DO center
         0.01059685, # Half vertical axis
@@ -40,3 +47,5 @@ def test_homework_1_near_optimal():
     # Run at that point and check currents values
     currents = problem(x=GEOM_PARAMS)
     assert numpy.allclose(currents,EXPECTED_CURRENTS)
+
+    assert numpy.allclose(problem.fields['voltages'][1::],[0.,0.,])

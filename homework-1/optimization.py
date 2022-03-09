@@ -3,6 +3,7 @@ from pathlib import Path
 import typing
 import logging
 import subprocess
+import re
 
 import numpy
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html#scipy.optimize.differential_evolution
@@ -80,17 +81,38 @@ class Problem(object):
         )
         logging.debug(o.decode())
 
+        # Determine the number of elements in the mesh
+        match = re.search(r'([0-9]*) nodes ([0-9]*) elements',o.decode())
+        assert match is not None and len(match.groups()) == 2
+        self.number_of_nodes, self.number_of_elements = [int(x) for x in match.groups()]
+
         # Ensure there is no warning or skipping in the output of GMSH
         if any(x in o.decode() for x in ['Warning','warning','skipping','Skipping']):
             raise RuntimeError(f"An error occured while meshing with {input_parameters_values}")
 
     def _read(self):
         """
-        Load current at output ports, discarding the first element in the file (not useful in this case).
+        Load the following fields:
+            * current at output ports
+            * voltage at input port
+            * integrated losses
+        Always discards the first element in the file (not useful in this case).
         """
+        fields = {}
+
+        # Read currents
         with open(Path(os.path.dirname(self.geo_file)) / f"I{self.outputfiles}.txt","r") as f:
-            a = numpy.loadtxt(f)
-        return a[1::]
+            fields['currents'] = numpy.loadtxt(f)[1::]
+
+        # Read voltages
+        with open(Path(os.path.dirname(self.geo_file)) / f"U{self.outputfiles}.txt","r") as f:
+            fields['voltages'] = numpy.loadtxt(f)[1::]
+
+        # Read integrated losses
+        with open(Path(os.path.dirname(self.geo_file)) / f"integrated.losses{self.outputfiles}.txt","r") as f:
+            fields['losses'] = numpy.loadtxt(f)[1::]
+
+        return fields
 
     @typeguard.typechecked
     def _solve(self,*,input_parameters_values : typing.Dict[str,float]):
@@ -129,8 +151,8 @@ class Problem(object):
         }
         self._mesh (input_parameters_values=x)
         self._solve(input_parameters_values=x)
-        a = self._read()
-        return a
+        self.fields = self._read()
+        return self.fields['currents']
 
     def objective_func(self,x):
         """
