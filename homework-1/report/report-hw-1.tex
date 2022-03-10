@@ -1,6 +1,7 @@
 \documentclass[]{article}
 
 \usepackage[margin=2cm]{geometry}
+\usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{cleveref}
 \usepackage{svg}
@@ -24,17 +25,20 @@
     \footnote{\url{https://github.com/romintomasetti/elec0041/}}
 \end{abstract}
 
-\section{Simulation}
+\section{Simulation setup}
 
 In this section, the simulated geometry is briefly described.
 A simple mesh convergence analysis is also conducted.
 Eventually, orders of magnitude of the simulated fields are verified.
 
-\subsection{Geometry}
+\subsection{Geometry and modeling}
 
 The simulated geometry is shown in~\Cref{figure:geometry}.
 This geometry differs from the problem statement in that it takes the symmetry of the problem into account.
 An ellipse has been added to balance the current distribution amongst the three output ports.
+
+Note that the simulation will be carried out considering that a 2D approximation is acceptable, i.e.
+perfect conductors are assumed for the connectors and 3D effects are neglected.
 
 \begin{figure}[h]
     \centering
@@ -57,7 +61,25 @@ which is a parametrization that has a good percision/computing cost trade-off.
 It must be noted that even though the ellipse's center will move vertically and minor and major axes will change,
 the mesh parametrization will be kept unchanged for simplicity.
 
+\section{Orders of magnitude}
 
+
+According to Pouillet's law, the resistance is given by $R = \rho l / A$.
+In this case, considering that the length $l$ is the distance between the left-most output port
+and the input port, it leads to:
+%
+\begin{equation}
+    R \approx \rho /t \approx 1.72 \cdot 10^{-8} / 2 \cdot 10^{-3} \approx 0.86 \cdot 10^{-5} \Omega,
+\end{equation}
+%
+where $t$ is the thickness of the copper plate and $\rho$ is the annealed copper resistivity
+\footnote{The annealed copper resistivity and conductivity can be found in
+\url{http://hyperphysics.phy-astr.gsu.edu/hbase/Tables/rstiv.html}.}.
+Then, using Ohm's law with one third of the input current, the expected voltage magnitude is
+%
+\begin{equation}
+    V = R I = \cfrac{375}{3} \cdot 0.86 \cdot 10^{-5} = 1.075 \cdot 10^{-3} \ V
+\end{equation}
 \section{Design optimization}
 
 Explain the choice of design optimization, i.e. why an ellipse.
@@ -84,5 +106,7 @@ An ellipse is simple to machine.
     }
     \label{figure:mesh-convergence}
 \end{figure}
+
+\include{homework-1/v.sym}
 
 \end{document}

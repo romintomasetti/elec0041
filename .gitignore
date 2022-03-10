@@ -6,6 +6,8 @@ homework-*/*.res
 homework-*/*.msh
 homework-*/*.txt
 homework-*/*.pos
+homework-*/*.png
+homework-*/*.tex
 homework-*/*.geo_unrolled
 homework-*/example/
 !homework-*/example/*.geo
@@ -21,6 +23,7 @@ report*.pdf
 *-tex.eps*
 *.svg
 *.dvi
+*.aux
 
 # Python-related
 *.pyc
