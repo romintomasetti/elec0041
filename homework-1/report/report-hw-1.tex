@@ -61,7 +61,7 @@ which is a parametrization that has a good percision/computing cost trade-off.
 It must be noted that even though the ellipse's center will move vertically and minor and major axes will change,
 the mesh parametrization will be kept unchanged for simplicity.
 
-\section{Orders of magnitude}
+\subsection{Orders of magnitude}
 
 
 According to Pouillet's law, the resistance is given by $R = \rho l / A$.
@@ -75,11 +75,15 @@ and the input port, it leads to:
 where $t$ is the thickness of the copper plate and $\rho$ is the annealed copper resistivity
 \footnote{The annealed copper resistivity and conductivity can be found in
 \url{http://hyperphysics.phy-astr.gsu.edu/hbase/Tables/rstiv.html}.}.
-Then, using Ohm's law with one third of the input current, the expected voltage magnitude is
+Then, using Ohm's law with one third of the input current, the expected scalar electric potential magnitude is
 %
 \begin{equation}
-    V = R I = \cfrac{375}{3} \cdot 0.86 \cdot 10^{-5} = 1.075 \cdot 10^{-3} \ V
+    V = R I = \cfrac{375}{3} \cdot 0.86 \cdot 10^{-5} = 1.075 \cdot 10^{-3} \ V.
 \end{equation}
+%
+It can be verified in~\Cref{figure:electric-potential} that the scalar electric potential is indeed
+of order $10^{-3}$.
+
 \section{Design optimization}
 
 Explain the choice of design optimization, i.e. why an ellipse.
@@ -107,6 +111,24 @@ An ellipse is simple to machine.
     \label{figure:mesh-convergence}
 \end{figure}
 
-\include{homework-1/v.sym}
+\begin{figure}[h]
+    \begin{minipage}{\textwidth}
+        \setlength{\unitlength}{0.1403pt}
+        \begin{picture}(0,0)
+            \includegraphics[scale=0.1403]{homework-1/report/v.sym.png}
+        \end{picture}%
+        \begin{picture}(3042,1932)(0,0)
+            \put(760.5,92){\makebox(0,0)[b]{\textcolor[rgb]{0,0,0}{{0}}}}
+            \put(1521,92){\makebox(0,0)[b]{\textcolor[rgb]{0,0,0}{{0.00125}}}}
+            \put(2281.5,92){\makebox(0,0)[b]{\textcolor[rgb]{0,0,0}{{0.0025}}}}
+            \put(1521,142.4){\makebox(0,0)[b]{\textcolor[rgb]{0,0,0}{{Scalar electric potential [V]}}}}
+            \put(2988,86){\makebox(0,0)[bl]{\textcolor[rgb]{0,0,0}{{X}}}}
+            \put(2928,146){\makebox(0,0)[bl]{\textcolor[rgb]{0,0,0}{{Y}}}}
+            \put(2928,86){\makebox(0,0)[bl]{\textcolor[rgb]{0,0,0}{{Z}}}}
+        \end{picture}
+    \end{minipage}
+    \caption{Scalar electric potential in the default configuration.}
+    \label{figure:electric-potential}
+\end{figure}
 
 \end{document}
