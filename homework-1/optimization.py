@@ -4,15 +4,16 @@ import typing
 import logging
 import subprocess
 import re
+import copy
 
 import numpy
-# https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.differential_evolution.html#scipy.optimize.differential_evolution
+import pandas
 import scipy.optimize
 import typeguard
 
 # Setup logging
 logging.basicConfig(
-    level = logging.DEBUG
+    level = logging.INFO
 )
 
 # Constant variables
@@ -63,6 +64,9 @@ class Problem(object):
 
         # Count the number of evaluations
         self.counter = 0
+
+        # Store the fields at each optimization iteration
+        self.database : pandas.DataFrame = None
 
     @typeguard.typechecked
     def _setnumber(self,*,input_parameters_values : typing.Dict[str,float]) -> typing.List[str]:
@@ -157,7 +161,21 @@ class Problem(object):
         self._mesh (input_parameters_values=x)
         self._solve(input_parameters_values=x)
         self.fields = self._read()
+
+        # Add to database
+        if self.database is None:
+            self.database = pandas.DataFrame(columns=list(self.fields.keys()) + list(x.keys()))
+        data = copy.deepcopy(self.fields)
+        data.update(copy.deepcopy(x))
+        self.database = self.database.append(
+            data,
+            ignore_index=True,
+        )
+
         return self.fields['currents']
+
+    def objective_func_inner(self,*,currents):
+        return numpy.abs(numpy.abs(currents[1]) - self.coef_I_inobj * numpy.abs(currents[2]))
 
     def objective_func(self,x):
         """
@@ -166,7 +184,7 @@ class Problem(object):
         (I1 and I3 are considered equal and we want them to equal I2).
         """
         currents = self(x)
-        o = numpy.abs(numpy.abs(currents[1]) - self.coef_I_inobj * numpy.abs(currents[2]))
+        o = self.objective_func_inner(currents = currents)
         logging.info(f"> Objective({x} => {currents}) = {o}")
         return o
 
@@ -215,9 +233,66 @@ def problem_homework_1(filenamebase : str = "busbar",outputfiles : str = "", coe
 
 if __name__ == "__main__":
 
+    DATABASE_FILE = os.path.abspath(__file__).replace('.py','.db')
+
     problem = problem_homework_1(
         filenamebase = "busbar.sym",
         outputfiles  = ".sym",
         coef_I_inobj = 2.0,
     )
-    problem.run()
+
+    # Use this switch to run the optimization only once, and then use the saved database
+    if True:
+        problem.run()
+        problem.database.to_csv(
+            path_or_buf = DATABASE_FILE,
+        )
+    else:
+        string_to_numpy_array = lambda s : numpy.array([float(x) for x in s.strip('[]').split(' ') if x != ""])
+        problem.database = pandas.read_csv(
+            filepath_or_buffer = DATABASE_FILE,
+            converters = {
+                # Convert from string representation of a list of floats to a numpy array
+                "currents" : string_to_numpy_array,
+                "voltages" : string_to_numpy_array,
+                "losses"   : string_to_numpy_array,
+                "DO_y"     : string_to_numpy_array,
+                "DO_a"     : string_to_numpy_array,
+                "DO_b"     : string_to_numpy_array,
+            }
+        )
+
+    # Transform data to numpy array for easier manipulation
+    currents = numpy.stack(problem.database["currents"].to_numpy(),axis=0)
+    voltages = numpy.stack(problem.database["voltages"].to_numpy(),axis=0)
+    losses   = numpy.stack(problem.database["losses"  ].to_numpy(),axis=0)
+    DO_y     = numpy.stack(problem.database["DO_y"    ].to_numpy(),axis=0)
+    DO_a     = numpy.stack(problem.database["DO_a"    ].to_numpy(),axis=0)
+    DO_b     = numpy.stack(problem.database["DO_b"    ].to_numpy(),axis=0)
+
+    # Re-create objective function
+    objective = numpy.abs(currents[:,1]- problem.coef_I_inobj * currents[:,2])
+
+    # Check sizes
+    assert currents .shape == (problem.database.shape[0],3) and currents .dtype == float
+    assert voltages .shape == (problem.database.shape[0],3) and currents .dtype == float
+    assert losses   .shape == (problem.database.shape[0],1) and losses   .dtype == float
+    assert DO_y     .shape == (problem.database.shape[0],1) and DO_y     .dtype == float
+    assert DO_a     .shape == (problem.database.shape[0],1) and DO_a     .dtype == float
+    assert DO_b     .shape == (problem.database.shape[0],1) and DO_b     .dtype == float
+    assert objective.shape == (problem.database.shape[0], ) and objective.dtype == float
+
+    # For the graphs, only use the points that have small objective
+    logging.info(
+        "> Optimal point is:\n"
+        "\t> DO_a      : {}\n"
+        "\t> DO_b      : {}\n"
+        "\t> DO_y      : {}\n"
+        "\t> imbalance : {}\n"
+        "\t> losses    : {}".format(
+        DO_a[-1,0],
+        DO_b[-1,0],
+        DO_y[-1,0],
+        objective[-1],
+        losses[-1,0],
+    ))
