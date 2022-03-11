@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 
+import typeguard
 import numpy
 import pandas
 import matplotlib
@@ -21,6 +22,16 @@ DEFAULT_MESH_PARAMETERS = {
     'IO_mesh'   : 0.000225,
     'DO_mesh'   : 0.000225,
 }
+
+@typeguard.typechecked
+def set_common_props(ax,legend : bool = True, xlabel : str = 'Number of elements [-]'):
+    """
+    Set common plot properties.
+    """
+    ax.grid(visible=True,which="major",color='#666666', linestyle='-',linewidth=0.2)
+    ax.set_yscale('linear')
+    ax.set_xlabel(xlabel)
+    if legend: ax.legend()
 
 def test_mesh_parameters():
     """
@@ -80,12 +91,6 @@ def test_mesh_convergence():
     # Create plots
     fig, axes = plt.subplots(1,2,figsize=(12,6))
 
-    def set_common_props(ax,legend=True):
-        ax.grid(visible=True,which="major",color='#666666', linestyle='-',linewidth=0.2)
-        ax.set_yscale('linear')
-        ax.set_xlabel('Number of elements [-]')
-        if legend: ax.legend()
-
     # Left plot : currents
     axes[0].plot(pd['number-of-elements'],pd['current-center'] / pd['current-center'].mean(),'*-.',label="$I_c / I_{c,mean}$ [-]")
     axes[0].plot(pd['number-of-elements'],pd['current-left']   / pd['current-left']  .mean(),'*--',label="$I_l / I_{l,mean}$ [-]")
@@ -98,7 +103,7 @@ def test_mesh_convergence():
     # Right plot : losses
     color_losses  = 'tab:blue'
     color_elapsed = 'tab:red'
-    line_losses = axes[1].plot(pd['number-of-elements'],pd['losses'] ,'*-.',color=color_losses,label="Integrated losses [?]")
+    line_losses = axes[1].plot(pd['number-of-elements'],pd['losses'] ,'*-.',color=color_losses,label="Integrated losses [$W \cdot m^{-2}$]")
     axes[1].tick_params(axis='y', labelcolor=color_losses)
     twin = axes[1].twinx()
     line_elapsed = twin.plot(pd['number-of-elements'],pd['elapsed'],'*--',color=color_elapsed,label='Elapsed time [s]')
