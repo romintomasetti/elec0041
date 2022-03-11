@@ -1,7 +1,9 @@
-\documentclass[]{article}
+\documentclass[10pt,a4paper]{article}
 
-\usepackage[margin=2cm]{geometry}
+\usepackage[left=1.2cm,right=1.2cm,top=1.2cm,bottom=1.2cm]{geometry}
 \usepackage{amsmath}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{hyperref}
 \usepackage{cleveref}
 \usepackage{svg}
@@ -21,15 +23,16 @@
 \begin{abstract}
     This is the report for the first homework of the course ELEC0041.
     The goal is to optimize a copper busbar such that the current arriving from an input port
-    is evenly distributed to 3 output ports.
-    \footnote{\url{https://github.com/romintomasetti/elec0041/}}
+    is evenly distributed to 3 output ports
+    \footnote{The code for this project is available at \url{https://github.com/romintomasetti/elec0041/}.}
+    .
 \end{abstract}
 
 \section{Simulation setup}
 
 In this section, the simulated geometry is briefly described.
 A simple mesh convergence analysis is also conducted.
-Eventually, orders of magnitude of the simulated fields are verified.
+Eventually, orders of magnitude of the simulated fields are verified using simple laws.
 
 \subsection{Geometry and modeling}
 
@@ -56,13 +59,13 @@ on the input and output ports, and on the balancing hole.
 The convergence is observed using a globally integrated quantity, namely the losses.
 The left and middle output port currents are also monitored.
 As can be seen in~\Cref{figure:mesh-convergence}, the quantities are nearly converged at the green cross,
-which is a parametrization that has a good percision/computing cost trade-off.
+which is a parametrization showcasing a good precision/computing cost trade-off.
 
-It must be noted that even though the ellipse's center will move vertically and minor and major axes will change,
+It must be noted that even though the ellipse's center will move vertically and minor and major axes will change
+during the optimization process,
 the mesh parametrization will be kept unchanged for simplicity.
 
 \subsection{Orders of magnitude}
-
 
 According to Pouillet's law, the resistance is given by $R = \rho l / A$.
 In this case, considering that the length $l$ is the distance between the left-most output port
@@ -86,13 +89,76 @@ of order $10^{-3}$.
 
 \section{Design optimization}
 
-Explain the choice of design optimization, i.e. why an ellipse.
+In this section, the selected design is discussed.
+Then, a simple optimization of the chosen design is conducted.
+Eventually, the \emph{nearly-optimal} design is presented, with a brief sensitivity analysis.
 
-An ellipse is simple to machine.
+\subsection{Design choice}
 
-\subsection{Brute force optimization}
+In order to balance the current distribution amongst the 3 output ports,
+the current path from the input port to the middle output port must be lenghtened.
+Keeping manufacturing cost and feasibility in mind, drilling an ellipse seems to be a good option
+to achieve path lenghtening, though less simple to manufacture than a circle.
+However, the oblong shape should help decrease the losses.
+
+Since no specific information/constraint was given with respect to the rectangular shape
+of the copper, it has been kept rectangular.
+An improved, cheaper
+\footnote{The improved design will be cheaper if the increased manufacturing cost is balanced
+by the reduction in price due to a lowered copper usage.},
+lightweight design could be thought of,
+removing the parts of the plate that participate the less to current
+conduction, keeping the losses at an acceptable level, via topology optimization.
+
+\subsection{Optimization}
+
+It was chosen to conduct an optimization campaign where the input parameters are the
+ellipse center along the vertical direction, major and minor axis, and the objective
+is $\left| I_{left}-I_{center}\right|$.
+
+As a very simple approach, the \href{
+    https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.brute.html
+}{\emph{scipy.optimize.brute}} optimizer is used. It starts by a grid-based design of experiments campaign
+and, from the best point, runs \href{
+    https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fmin.html
+}{\emph{scipy.optimize.fmin}} to refine the best solution.
+
+It must be noted that a more advanced optimization campaign should also take the cost and losses into account,
+i.e. perform a multi-objective optimization.
+
+The optimal point found by the method (with default parameters) is given in~\Cref{table:optimal-point}.
+The current imbalance is clearly neglectable.
+It must be noted this optimal point must be sufficiently \emph{robust} to
+cope with manufacturing tolerances. A sensitivity analysis is conducted in~\Cref{subsection:sensitivity}.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|c|}
+        \hline
+        Parameter & Value & Unit \\\hline
+        Ellipse half-vertical axis              ($DO_a$) & $1.05930 \cdot 10^{-2}$ & $m$              \\\hline
+        Ellipse half-horizontal axis            ($DO_b$) & $6.35262 \cdot 10^{-3}$ & $m$              \\\hline
+        Ellipse center along vertical direction ($DO_y$) & $2.78669 \cdot 10^{-2}$ & $m$              \\\hline
+        Current imbalance                                & $6.04700 \cdot 10^{-5}$ & $A \cdot m^{-1}$ \\\hline
+        Losses                                           & $239.829$               & $W \cdot m^{-2}$ \\\hline
+    \end{tabular}
+    \caption{Geometrical parameters of the optimal design with neglectable current imbalance.}
+    \label{table:optimal-point}
+\end{table}
 
 \subsection{Sensivity near optimal point}
+\label{subsection:sensitivity}
+
+For this preliminary analysis of the busbar, a simple sensitivity analysis is chosen, namely \emph{One-at-a-time} (OAT).
+Considering a machining tolerance of a tenth of a millimeter seems reasonable, since smaller tolerances
+add extra costs. Considering the optimal values for the 3 geometrical parameters, a tenth of a millimeter corresponds
+more or less to 0.5\%, 1\% and 1.5\% variability for $DO_y$, $DO_a$ and $DO_b$, respectively.
+A OAT sensitivity analysis is shown in~\Cref{figure:sensitivity-around-optimal}.
+It seems that the design is more sensitive to $DO_b$ (minor ellipse axis).
+It is also clear that the machining tolerance would need to be less than a tenth of a millimeter for the design
+to perfectly balance the current.
+
+\section{Conclusion}
 
 \pagebreak
 
@@ -129,6 +195,13 @@ An ellipse is simple to machine.
     \end{minipage}
     \caption{Scalar electric potential in the default configuration.}
     \label{figure:electric-potential}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includesvg[width=0.5\textwidth]{homework-1/test_sensitivity.svg}
+    \caption{OAT sensitivity of the imbalance w.r.t. optimal parameter values from~\Cref{table:optimal-point}.}
+    \label{figure:sensitivity-around-optimal}
 \end{figure}
 
 \end{document}
