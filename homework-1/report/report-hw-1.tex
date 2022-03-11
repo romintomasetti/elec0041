@@ -96,25 +96,26 @@ Eventually, the \emph{nearly-optimal} design is presented, with a brief sensitiv
 \subsection{Design choice}
 
 In order to balance the current distribution amongst the 3 output ports,
-the current path from the input port to the middle output port must be lenghtened.
-Keeping manufacturing cost and feasibility in mind, drilling an ellipse seems to be a good option
-to achieve path lenghtening, though less simple to manufacture than a circle.
+the current path from the input port to the middle output port must be lengthened.
+Keeping manufacturing costs and feasibility in mind, drilling an ellipse seems to be a good option
+to achieve path lengthening, though less simple to manufacture than a circle.
 However, the oblong shape should help decrease the losses.
 
 Since no specific information/constraint was given with respect to the rectangular shape
-of the copper, it has been kept rectangular.
-An improved, cheaper
+of the copper plate, it has been kept rectangular.
+An improved, cheaper,
+lightweight design
 \footnote{The improved design will be cheaper if the increased manufacturing cost is balanced
-by the reduction in price due to a lowered copper usage.},
-lightweight design could be thought of,
+by the reduction in price due to a lowered copper usage.}
+could be thought of,
 removing the parts of the plate that participate the less to current
 conduction, keeping the losses at an acceptable level, via topology optimization.
 
 \subsection{Optimization}
 
 It was chosen to conduct an optimization campaign where the input parameters are the
-ellipse center along the vertical direction, major and minor axis, and the objective
-is $\left| I_{left}-I_{center}\right|$.
+ellipse center along the vertical direction, major and minor axes, and the objective
+is $\left| I_{left}-I_{center}\right|$, \emph{i.e.} the current imbalance.
 
 As a very simple approach, the \href{
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.brute.html
@@ -123,7 +124,7 @@ and, from the best point, runs \href{
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fmin.html
 }{\emph{scipy.optimize.fmin}} to refine the best solution.
 
-It must be noted that a more advanced optimization campaign should also take the cost and losses into account,
+It must be noted that a more advanced optimization campaign should also take weight, costs and losses into account,
 i.e. perform a multi-objective optimization.
 
 The optimal point found by the method (with default parameters) is given in~\Cref{table:optimal-point}.
@@ -151,14 +152,19 @@ cope with manufacturing tolerances. A sensitivity analysis is conducted in~\Cref
 
 For this preliminary analysis of the busbar, a simple sensitivity analysis is chosen, namely \emph{One-at-a-time} (OAT).
 Considering a machining tolerance of a tenth of a millimeter seems reasonable, since smaller tolerances
-add extra costs. Considering the optimal values for the 3 geometrical parameters, a tenth of a millimeter corresponds
+add extra costs. Considering the optimal values for the 3 geometrical parameters (see~\Cref{table:optimal-point}), a tenth of a millimeter corresponds
 more or less to 0.5\%, 1\% and 1.5\% variability for $DO_y$, $DO_a$ and $DO_b$, respectively.
 A OAT sensitivity analysis is shown in~\Cref{figure:sensitivity-around-optimal}.
-It seems that the design is more sensitive to $DO_b$ (minor ellipse axis).
+It seems that the design is more sensitive to $DO_b$ (minor ellipse axis), though a deeper analysis is needed.
 It is also clear that the machining tolerance would need to be less than a tenth of a millimeter for the design
 to perfectly balance the current.
 
 \section{Conclusion}
+
+In this report, a preliminary design of a DC busbar was conducted, see~\Cref{figure:geometry}.
+An optimal design was computed using a single objective optimization driven by the current distribution imbalance,
+see~\Cref{table:optimal-point}.
+A short sensitivity analysis near the optimal point with respect to the 3 design parameters was conducted in~\Cref{subsection:sensitivity}.
 
 \pagebreak
 
@@ -166,11 +172,11 @@ to perfectly balance the current.
 
 \begin{figure}[h]
     \centering
-    \includesvg[width=\textwidth]{homework-1/test_mesh_convergence.svg}
+    \includesvg[width=0.8\textwidth]{homework-1/test_mesh_convergence.svg}
     \caption{
         Convergence study.
         The mesh is driven by 4 parameters, namely the size of the elements on the top and bottom borders of the copper plate,
-        on the input and output parts and on the ellipse.
+        on the input and output ports and on the ellipse.
         Their relative proportions are kept constant.
         The \textcolor{darkpastelgreen}{green cross} represents the chosen mesh parametrization.
     }
