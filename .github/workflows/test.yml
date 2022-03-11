@@ -76,6 +76,4 @@ jobs:
                       report-hw-1.pdf
                       homework-1/*.pro
                       homework-1/*.geo
-                      optimization.py
-                      test_mesh_convergence.py
-                      test_optimization.py
+                      homework-1/*.py
